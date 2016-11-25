@@ -1,6 +1,7 @@
 // modules/routes.js
 import React from 'react'
-import { Route, IndexRoute } from 'react-router'
+import { render } from 'react-dom'
+import { Router, Route, browserHistory, IndexRoute } from 'react-router'
 import App from './App'
 import About from './About'
 import Category from './Category'
@@ -20,7 +21,8 @@ module.exports = (
     <Route path="/about" component={About}/>
     <Route path="/category/:idcategory" component={Category}/>
     <Route path="/product/:idproduct" component={Product}/>
-    <Route path="/search" component={Search}/>
-    <Route path="/search/searchresult/:qstring" component={Searchresult}/>
+    <Route path="/search" component={Search}>
+      <Route path="/search/searchresult/:qstring" component={Searchresult}/>
+    </Route>
   </Route>
 )

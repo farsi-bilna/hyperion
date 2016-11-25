@@ -14,7 +14,7 @@
 // Names of the two caches used in this version of the service worker.
 // Change to v2, etc. when you update any of the local resources, which will
 // in turn trigger the install event again.
-const PRECACHE = 'precache-v6';
+const PRECACHE = 'precache-v9';
 const RUNTIME = 'runtime';
 
 // A list of local resources we always want to be cached.
@@ -23,6 +23,7 @@ const PRECACHE_URLS = [
   './', // Alias for index.html
   'index.css',
   './repos/',
+  'https://charlie.orami.co.id/api/home/content',
   'https://code.jquery.com/jquery-1.11.1.min.js',
   'https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css'
 ];

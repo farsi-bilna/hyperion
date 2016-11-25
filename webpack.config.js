@@ -1,28 +1,19 @@
-var webpack = require('webpack')
-var path = require('path');
-//var autoprefixer = require('autoprefixer');
-//var ExtractTextPlugin = require('extract-text-webpack-plugin');
+const path = require('path');
+const webpack = require('webpack');
+const autoprefixer = require('autoprefixer');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
-  entry: './index.js',
   context: __dirname,
+  devtool: 'inline-source-map',
+  entry: 
+    './index.js'
+  ,
   output: {
-    path: 'public',
+    path: path.join(__dirname, 'build'),
     filename: 'bundle.js',
     publicPath: '/'
   },
-
-  plugins: process.env.NODE_ENV === 'production' ? [
-    //new ExtractTextPlugin('bundle.css'),
-    new webpack.optimize.DedupePlugin(),
-    new webpack.NoErrorsPlugin(),
-    new webpack.optimize.OccurrenceOrderPlugin(),
-    new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify('development')
-    }),
-    new webpack.optimize.UglifyJsPlugin()
-  ] : [],
-  //postcss: [autoprefixer],
   resolve: {
     extensions: ['', '.scss', '.css', '.js', '.json'],
     modulesDirectories: [
@@ -30,17 +21,39 @@ module.exports = {
       path.resolve(__dirname, './node_modules')
     ]
   },
-  /*sassLoader: {
-    data: '@import "theme/_config.scss";',
-    includePaths: [path.resolve(__dirname, './modules')]
-  },*/
+  toolbox: {
+    theme: path.join(__dirname, 'app/client/toolbox-theme.scss')
+  },
   module: {
     loaders: [
-      { test: /(\.js|\.jsx)$/, exclude: /node_modules/, loader: 'babel-loader?presets[]=es2015&presets[]=react' }
-      /*, {
+      {
+        test: /(\.js|\.jsx)$/,
+        exclude: /(node_modules)/,
+        loader: 'babel',
+        query: { presets: ['es2015','react'] }
+      }, {
         test: /(\.scss|\.css)$/,
         loader: ExtractTextPlugin.extract('style', 'css?sourceMap&modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!postcss!sass')
-      }*/
+      }
     ]
-  }
-}
+  },
+  postcss: [autoprefixer],
+  sassLoader: {
+    data: '@import "theme/_config.scss";',
+    includePaths: [path.resolve(__dirname, './modules')]
+  },
+  plugins: [
+    new ExtractTextPlugin('bundle.css', { allChunks: true }),
+    new webpack.optimize.OccurenceOrderPlugin(),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor',
+      filename: 'vendor.bundle.js',
+      minChunks: Infinity
+    }),
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.NoErrorsPlugin(),
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify('development')
+    })
+  ]
+};

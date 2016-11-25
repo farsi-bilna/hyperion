@@ -9,9 +9,9 @@ export default React.createClass({
     event.preventDefault()
     const qstring = event.target.elements[0].value
     const convert_qstring = "?q=" + qstring
-    const api_url = `https://charlie.orami.co.id/api/products/search${convert_qstring}`
+    //const api_url = `https://charlie.orami.co.id/api/products/search${convert_qstring}`
     const path = `/search/searchresult/${qstring}`
-    console.log(api_url);
+    //console.log(api_url);
     this.context.router.push(path)
   },
   render() {

@@ -1,6 +1,7 @@
 import React from 'react'
 import Carousel from 'react-bootstrap/lib/Carousel';
 import CarouselItem from 'react-bootstrap/lib/CarouselItem';
+import ProductBox from './FeaturedProd';
 
 /*var Carouselimage = React.createClass({
   render: function() {
@@ -63,7 +64,7 @@ var CarouselHome = React.createClass({
 export default React.createClass({
   render() {
     return (
-        <div>homepage</div>
+          <ProductBox/>
     )
   }
 })

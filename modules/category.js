@@ -11,31 +11,39 @@ import { Link } from 'react-router'
 
 
 var Product = React.createClass({
-  rawMarkup: function() {
-    var md = new Remarkable();
-    var rawMarkup = md.render(this.props.children.toString());
-    return { __html: rawMarkup };
+  getInitialState: function() {
+    return {active: false};
   },
-
+  handleToggle : function() {
+    this.setState({active: !this.state.active});
+  },
   render: function() {
+    const isNew = this.props.new;
+    let newlabel = null;
+    if (this.props.new) {
+      newlabel = <span className="prod-att new-product">New</span>
+    }
     return (
-      <Media>
-        <Media.Left>
-        <img width={120} className="image" src={this.props.image}/>
-        </Media.Left>
-        <Media.Body>
-          <Media.Heading>
-        	<NavLink to={'/product/'+this.props.productId}>
-          	{this.props.productname}
+      <li className="prod-widget-horizontal">
+      <div className="prod-image">
+      <img className="image" src={this.props.image}/>
+      </div>
+      <div className="wrap-right-area">
+        {newlabel}
+        <div className="prod-name" onClick={this.handleToggle}>
+          <NavLink to={'/product/'+this.props.productId}>
+            {this.props.productname}
           </NavLink>
-          </Media.Heading>
-          <p>
-            <span>Rp. {this.props.price}</span><br/>
-            <span><Glyphicon glyph="star" />{this.props.rating}</span>
-          </p>
-        </Media.Body>
-        {/*<span dangerouslySetInnerHTML={this.rawMarkup()} />*/}
-      </Media>
+        </div>
+          <span className="widget-price"><p className="price">Rp. {this.props.price}</p></span>
+          <div className="star-product">
+            <div className="wrap-star">
+            <Glyphicon glyph="star" />
+            </div>
+            <div className="total-review">{this.props.rating}</div>
+          </div>
+      </div>
+      </li>
     );
   }
 });
@@ -44,7 +52,7 @@ var ProductBox = React.createClass({
   loadProductsFromServer: function() {
     $.ajax({
       url: this.props.url,
-      data     : {limit: this.props.perPage, offset: this.state.offset},
+      data     : {limit: this.props.perPage, page: this.state.page},
       dataType: 'json',
       type     : 'GET',
       success: function(data) {
@@ -57,17 +65,17 @@ var ProductBox = React.createClass({
     });
   },
   getInitialState: function() {
-    return {data: [], offset : 0};
+    return {data: [], page : 0};
   },
   componentDidMount: function() {
     this.loadProductsFromServer();
   },
   handlePageClick : function(data) {
     let selected = data.selected;
-    let offset = Math.ceil(selected * this.props.perPage);
-    console.log( data + data.selected + offset);
+    let page = Math.ceil(selected * this.props.perPage);
+    console.log( data + data.selected + page);
 
-    this.setState({offset: offset}, () => {
+    this.setState({page: page}, () => {
       this.loadProductsFromServer();
       console.log(selected);
     });
@@ -76,16 +84,17 @@ var ProductBox = React.createClass({
 
     /*var handlePageClick = function(data){
       let selected = data.selected;
-      let offset = Math.ceil(selected * this.props.perPage);
+      let page = Math.ceil(selected * this.props.perPage);
 
-      this.setState({offset: offset}, () => {
+      this.setState({page: page}, () => {
         this.loadProductsFromServer();
       });
     };*/
     return (
       <div className="ProductList category-page">
-        <h1>{this.state.cat_name} </h1>
-        <Filtercategory datafilteratt={this.state.filteratt} />
+        <div className="tag-title">
+        <h3 className="title _h3">{this.state.cat_name}</h3>
+        </div>
         <ProductList data={this.state.data} />
         <ReactPaginate previousLabel={"previous"}
                        nextLabel={"next"}
@@ -98,7 +107,6 @@ var ProductBox = React.createClass({
                        containerClassName={"pagination"}
                        subContainerClassName={"pages pagination"}
                        activeClassName={"active"} />
-        
       </div>
     );
   }
@@ -108,15 +116,14 @@ var ProductList = React.createClass({
   render: function() {
     var productNodes = this.props.data.map(function(product, index) {
       return (
-        <Product productname={product.name} rating={product.rating.summary} key={index} url={product.url_key} price={product.price.final} productId={product.id} image={product.image_default.small_image.vertical}>
-          {product.short_desc}
+        <Product productname={product.name} rating={product.rating.summary} key={index} url={product.url_key} price={product.price.final} productId={product.id} image={product.image_default.small_image.vertical} new={product.is_new} brand={product.brand.name} >
         </Product>
       );
     });
     return (
-      <div className="productList">
+      <ul className="productList">
         {productNodes}
-      </div>
+      </ul>
     );
   }
 });
@@ -136,16 +143,7 @@ var filterprice = React.createClass({
 
 var Attributechild = React.createClass({
   render: function() {
-    var User = function({ params: { userID }, location: { query } }){
-      let age = query && query.showAge ? '33' : '40'
-
-      return (
-        <div className="User">
-          <h1>User id: {userID}</h1>
-          {age}
-        </div>
-      )
-    }
+    
     if (this.props.attchild) {
       var filterNodes = this.props.attchild.map(function(attchild, index) {
       console.log(attchild);
